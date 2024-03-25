@@ -1,0 +1,8 @@
+feedparser
+requests
+hashlib
+os
+time
+biopython
+python-dotenv
+python-dateutil
