@@ -8,7 +8,7 @@ This bot automatically fetches the latest articles from the *Science* journal RS
 
 - Python 3.8 or newer
 - An active internet connection
-- An API key for AnthropicVertex (for Claude3)
+- An access to VertexAI (for Claude3)
 - A Discord server with a webhook URL
 - NCBI API key (optional for higher PubMed query rates)
 
