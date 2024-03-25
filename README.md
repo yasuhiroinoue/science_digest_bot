@@ -69,7 +69,7 @@ This example runs the script every Friday at 9:00 AM.
 
 1. **Fetch Articles:** Uses RSS to get the latest articles from *Science*.
 2. **Retrieve Abstracts:** Looks up articles by DOI in PubMed to get abstracts.
-3. **Summarize with AI:** Sends abstracts to Claude3 to generate haikus.
+3. **Summarize with AI:** Sends abstracts to Claude3 to generate short summaries.
 4. **Post to Discord:** Formats the summaries and posts them to a Discord channel.
 
 ### Note
