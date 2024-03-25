@@ -1,6 +1,6 @@
 # Science Article Digest Bot
 
-This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from PubMed, summarizes the abstracts into haikus using the Claude3 AI model, and posts these summaries to a specified Discord channel.
+This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from PubMed, summarizes the abstracts in short using the Claude3-haiku model, and posts these summaries to a specified Discord channel.
 
 ## Setup
 
