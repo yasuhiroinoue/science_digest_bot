@@ -1,6 +1,6 @@
 # Science Article Digest Bot
 
-This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from CrossRef, summarizes the abstracts in short using the Claude3.5-haiku model, and posts these summaries to a specified Discord channel.
+This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from Crossref, summarizes the abstracts in short using the Claude3.5-haiku model, and posts these summaries to a specified Discord channel.
 
 ## Setup
 
@@ -10,7 +10,6 @@ This bot automatically fetches the latest articles from the *Science* journal RS
 - An active internet connection
 - An access to VertexAI (for Claude3)
 - A Discord server with a webhook URL
-- NCBI API key (optional for higher PubMed query rates)
 
 ### Installation
 
@@ -42,7 +41,6 @@ PROJECT_ID=<your-anthropic-project-id>
 RSS_URL=<science-journal-rss-feed-url>
 WEBHOOK_URL=<your-discord-webhook-url>
 HASH_FILE_PATH=./latest_entry_hash.txt
-ENTREZ_EMAIL=<your-email-for-ncbi>
 ```
 
 Ensure you replace `<placeholder>` with your actual data.
