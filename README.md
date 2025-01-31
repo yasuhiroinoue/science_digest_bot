@@ -1,6 +1,6 @@
 # Science Article Digest Bot
 
-This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from Crossref, summarizes the abstracts in short using the Claude3.5-haiku model, and posts these summaries to a specified Discord channel.
+This bot automatically fetches the latest articles from the *Science* journal RSS feed, retrieves their abstracts from Crossref, summarizes the abstracts in Japanese using the Gemini-2.0-Flash-Exp model, and posts these summaries to a specified Discord channel.
 
 ## Setup
 
@@ -8,7 +8,7 @@ This bot automatically fetches the latest articles from the *Science* journal RS
 
 - Python 3.8 or newer
 - An active internet connection
-- An access to VertexAI (for Claude)
+- Access to Google Vertex AI (for Gemini API)
 - A Discord server with a webhook URL
 
 ### Installation
@@ -35,11 +35,11 @@ pip install -r requirements.txt
 Copy the `.env.example` file to a new file named `.env`, and fill in the values:
 
 ```plaintext
-MODEL=<your-anthropic-model-identifier>
-REGION=<your-anthropic-region>
-PROJECT_ID=<your-anthropic-project-id>
+MODEL=gemini-2.0-flash-exp
+REGION=<your-google-cloud-region>
+PROJECT_ID=<your-google-cloud-project-id>
 RSS_URL=<science-journal-rss-feed-url>
-WEBHOOK_URL=<your-discord-webhook-url>
+WEBHOOK_URLS=<your-discord-webhook-urls,comma-separated>
 HASH_FILE_PATH=./latest_entry_hash.txt
 ```
 
@@ -47,7 +47,7 @@ Ensure you replace `<placeholder>` with your actual data.
 
 ## Usage
 
-Execute the script to fetch the latest articles, summarize them, and post to Discord:
+Execute the script to fetch the latest articles, summarize them in Japanese, and post to Discord:
 
 ```bash
 python science.py
@@ -67,12 +67,14 @@ This example runs the script every Friday at 9:00 AM.
 
 1. **Fetch Articles:** Uses RSS to get the latest articles from *Science*.
 2. **Retrieve Abstracts:** Looks up articles by DOI in Crossref to get abstracts.
-3. **Summarize with AI:** Sends abstracts to Claude3 to generate short summaries.
+3. **Summarize with AI:** Uses Gemini API to generate concise Japanese summaries.
 4. **Post to Discord:** Formats the summaries and posts them to a Discord channel.
 
 ### Note
 
-The script respects API rate limits by including pauses between requests. Adjust these as necessary based on your API usage policies.
+- The script respects API rate limits by including pauses between requests. Adjust these as necessary based on your API usage policies.
+- If no new articles are found, the script will skip processing.
+- If multiple Discord Webhook URLs are set, messages will be posted to all of them.
 
 ## Contributing
 
