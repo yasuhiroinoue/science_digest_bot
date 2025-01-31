@@ -3,21 +3,46 @@ import requests
 import hashlib
 import os
 import time
-from anthropic import AnthropicVertex
 from dotenv import load_dotenv
 from dateutil.parser import parse as parse_date  # To parse date
+from google import genai
+from google.genai import types
+
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # Replace hard-coded values with values from environment variables
-LLM_model = os.getenv("MODEL", "claude-3-5-haiku@20241022")
-region = os.getenv("REGION", "us-east5")
+region = os.getenv("REGION", "us-central1")
 project_id = os.getenv("PROJECT_ID", "default_project_id")
 rss_url = os.getenv("RSS_URL", "default_rss_url")
 webhook_urls = os.environ.get("WEBHOOK_URLS").split(",")
 hash_file_path = os.getenv("HASH_FILE_PATH", "latest_entry_hash.txt")
 
+
+# Gemini
+MODEL_ID = "gemini-2.0-flash-exp"
+
+generate_content_config = types.GenerateContentConfig(
+    temperature = 1,
+    top_p = 0.95,
+    # top_k= 64,
+    max_output_tokens = 8192,
+    system_instruction="""
+あなたは高度な英語-日本語翻訳者です。提供された英語の論文要旨を学術的な聴衆に向けて日本語に要約してください。要約は100文字以内に抑え、論文の核心を簡潔に表現してください。文字数の制限は論文の内容の複雑さによって柔軟に調整可能です。要約が不可能な場合、または「Abstract not found.」と入力された場合は、「要約なし」と返してください。論文要旨が短い場合、直接的な日本語訳を提供してください。プロセスの結果として、要約または翻訳されたテキストのみを返すようにしてください。「要旨:」という見出しを付けることは禁止します。
+""",
+)
+
+gemini_client = genai.Client(
+    vertexai=True, project=project_id, location=region
+)
+
+# Gemini response
+def generate_text(prompt):
+    response = gemini_client.models.generate_content(
+    model=MODEL_ID, contents=prompt, config=generate_content_config
+    )
+    return response.text
 
 def get_latest_entry_hash(rss_data):
     latest_entry = rss_data['entries'][0]
@@ -137,31 +162,18 @@ def format_to_markdown(content_message):
     return markdown_format
 
 
-def generate_and_send_messages(extracted_info, LLM_model, region, project_id, webhook_urls):
-    client = AnthropicVertex(region=region, project_id=project_id)
-    
+def generate_and_send_messages(extracted_info, webhook_urls):
+    # client = AnthropicVertex(region=region, project_id=project_id)
     count = 1
     for info in extracted_info:
         print(count)
         count += 1
         content_message = f"Summary: {info['summary']}\n"
 
-        # Send request to Anthropics API to generate content
-        message = client.messages.create(
-            max_tokens=2048,
-            system="""
-あなたは高度な英語-日本語翻訳者です。提供された英語の論文要旨を学術的な聴衆に向けて日本語に要約してください。要約は100文字以内に抑え、論文の核心を簡潔に表現してください。文字数の制限は論文の内容の複雑さによって柔軟に調整可能です。要約が不可能な場合、または「Abstract not found.」と入力された場合は、「要約なし」と返してください。論文要旨が短い場合、直接的な日本語訳を提供してください。プロセスの結果として、要約または翻訳されたテキストのみを返すようにしてください。「要旨:」という見出しを付けることは禁止します。
-""",
-            messages=[
-                {
-                    "role": "user",
-                    "content": content_message,
-                }
-            ],
-            model=LLM_model,
-        )
+        abstract = generate_text(content_message)
+        # debug
+        print(abstract)
 
-        abstract = message.content[0].text
         authors = format_authors(info)
         content = f"Title: {info['Title']}\nAuthors: {authors[0]}\nDate: {info['Date']}\nSummary: {abstract}\nURL: {info['URL']}"        
 
@@ -188,7 +200,7 @@ def generate_and_send_messages(extracted_info, LLM_model, region, project_id, we
                 # すべての再試行が失敗した場合
                 print(f"Failed to post after {max_retries} attempts.")
         
-        time.sleep(5)  # Adjust based on your rate limit policies
+        time.sleep(30)  # Adjust based on your rate limit policies
 
 
 def main():
@@ -204,7 +216,7 @@ def main():
         extracted_info.append(article)
 
     if extracted_info:
-        generate_and_send_messages(extracted_info, LLM_model, region, project_id, webhook_urls)
+        generate_and_send_messages(extracted_info, webhook_urls)
         save_latest_entry_hash(get_latest_entry_hash(feedparser.parse(rss_url)), hash_file_path)
 
 
