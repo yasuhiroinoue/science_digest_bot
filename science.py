@@ -31,6 +31,7 @@ HEADERS = {
 
 # Gemini
 MODEL_ID = os.getenv("MODEL_ID", "gemini-2.5-flash-lite-preview-06-17")
+BUDGET = os.getenv("BUDGET", 0)
 
 generate_content_config = types.GenerateContentConfig(
     temperature=1,
@@ -41,7 +42,7 @@ generate_content_config = types.GenerateContentConfig(
 あなたは高度な英語-日本語翻訳者です。提供された英語の論文要旨を学術的な聴衆に向けて日本語に要約してください。要約は100文字以内に抑え、論文の核心を簡潔に表現してください。文字数の制限は論文の内容の複雑さによって柔軟に調整可能です。要約が不可能な場合、または「Abstract not found.」と入力された場合は、「要約なし」と返してください。論文要旨が短い場合、直接的な日本語訳を提供してください。プロセスの結果として、要約または翻訳されたテキストのみを返すようにしてください。「要旨:」という見出しを付けることは禁止します。
 """,
     thinking_config=types.ThinkingConfig(
-        thinking_budget=0,
+        thinking_budget=BUDGET,
     ),
     response_mime_type="text/plain",
 )
