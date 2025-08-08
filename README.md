@@ -35,7 +35,7 @@ pip install -r requirements.txt
 Copy the `.env.example` file to a new file named `.env`, and fill in the values:
 
 ```plaintext
-MODEL=gemini-2.0-flash-exp
+MODEL_ID=gemini-2.0-flash-exp
 REGION=<your-google-cloud-region>
 PROJECT_ID=<your-google-cloud-project-id>
 RSS_URL=<science-journal-rss-feed-url>
